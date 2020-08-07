@@ -1,7 +1,10 @@
+import argparse
 import time
 from random import choice
 
 from typing import List
+from typing import Optional
+from typing import Sequence
 from typing import Tuple
 
 FILE_NAME = "phrases"
@@ -45,13 +48,15 @@ def check_for_mistakes(practice_phrase: str, typed_phrase: str) -> int:
     return error_count
 
 
-def practice(practice_phrase: str) -> None:
+def practice(practice_phrase: str) -> bool:
     print()
     print(practice_phrase)
     print()
     start_time = time.time()
     data = input()
     elapse_time = time.time() - start_time
+    if data.lower() in ["quit", "exit"]:
+        return False
     error_count = check_for_mistakes(practice_phrase, data)
 
     # calculate wpm
@@ -65,11 +70,41 @@ def practice(practice_phrase: str) -> None:
     print(f"Errors: {error_count}")
     print(f"Net WPM: {net_wpm:.1f}")
     print(f"Time: {elapse_time:.1f} seconds")
+    return True
 
 
-def main() -> int:
+def argument_parsing(args: Optional[Sequence[str]] = None) -> argparse.Namespace:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-s", dest="size", type=str,
+                        choices=["short", "medium", "long"],
+                        help="Size of the practice typing phrase.")
+    parser.add_argument("-c", dest="continues", action="store_true",
+                        help="Continues practice until exit or quit is entered.")
+    return parser.parse_args(args)
+
+
+def main(args: Optional[Sequence[str]] = None) -> int:
+    argv = argument_parsing(args)
     short_phrases, medium_phrases, long_phrases = load_practice_phrases()
-    practice(choice(short_phrases))
+    if argv.size == "short":
+        phrase = short_phrases
+    elif argv.size == "medium":
+        phrase = medium_phrases
+    elif argv.size == "long":
+        phrase = long_phrases
+    else:
+        phrase = short_phrases + medium_phrases + long_phrases
+
+    while True:
+        practice(choice(phrase))
+        if argv.continues:
+            user_input = input("Another practice random practice phrase? ").lower()
+            if user_input in ["y", "yes"]:
+                continue
+            else:
+                break
+        else:
+            break
     return 0
 
 

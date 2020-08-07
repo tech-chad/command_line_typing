@@ -55,3 +55,25 @@ def test_practice_run_through_no_mistakes(capsys):
     command_line_typing.practice("This is a test line for testing.")
     captured = capsys.readouterr().out
     assert "Errors: 0" in captured
+
+
+@pytest.mark.parametrize("test_args, expected_result", [
+    ([], None), (["-s", "short"], "short"),
+    (["-s", "medium"], "medium"), (["-s", "long"], "long"),
+])
+def test_argument_parsing_size(test_args, expected_result):
+    result = command_line_typing.argument_parsing(test_args)
+    assert result.size == expected_result
+
+
+def test_argument_parsing_size_error():
+    with pytest.raises(SystemExit):
+        command_line_typing.argument_parsing(["-s", "easy"])
+
+
+@pytest.mark.parametrize("test_args, expected_result", [
+    ([], False), (["-c"], True)
+])
+def test_argument_parsing_continues(test_args, expected_result):
+    result = command_line_typing.argument_parsing(test_args)
+    assert result.continues == expected_result
