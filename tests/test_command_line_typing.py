@@ -102,3 +102,38 @@ long 3 test"""
         command_line_typing.main(["-p"])
         captured = capsys.readouterr().out
         assert "Press enter to start: " in captured
+
+
+@pytest.mark.parametrize("test_args, expected_result", [
+    (["-s", "short"], "test line 1"),
+    (["-s", "medium"], "medium 1"),
+    (["-s", "long"], "test long 1"),
+])
+def test_main_different_size_phrases(test_args, expected_result, capsys):
+    test_data = """[SHORT]
+test line 1
+[MEDIUM]
+medium 1
+[LONG]
+test long 1
+"""
+    command_line_typing.input = mock_input(expected_result)
+    with mock.patch.object(command_line_typing, "read_text", return_value=test_data):
+        command_line_typing.main(test_args)
+        captured = capsys.readouterr().out
+        assert expected_result in captured
+
+
+def test_main_continues(capsys):
+    test_data = """[SHORT]
+    test line 1
+[MEDIUM]
+[LONG]
+"""
+    command_line_typing.input = mock_input("test line 1", "yes", "test line 1", "no")
+    with mock.patch.object(command_line_typing, "read_text", return_value=test_data):
+        command_line_typing.main(["-c", "-s", "short"])
+        captured = capsys.readouterr().out
+        assert "test line 1" in captured
+        assert "Another practice random practice phrase? " in captured
+
