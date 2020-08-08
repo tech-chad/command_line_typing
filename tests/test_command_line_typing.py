@@ -72,8 +72,37 @@ def test_argument_parsing_size_error():
 
 
 @pytest.mark.parametrize("test_args, expected_result", [
+    ([], False), (["-p"], True),
+])
+def test_argument_parsing_pause(test_args, expected_result):
+    result = command_line_typing.argument_parsing(test_args)
+    assert result.pause == expected_result
+
+
+@pytest.mark.parametrize("test_args, expected_result", [
     ([], False), (["-c"], True)
 ])
 def test_argument_parsing_continues(test_args, expected_result):
     result = command_line_typing.argument_parsing(test_args)
     assert result.continues == expected_result
+
+
+def test_main_pause_before_starting(capsys, tmpdir):
+    test_file = tmpdir.join("phrases")
+    test_data = """[SHORT]
+test line 1
+test line 2
+[MEDIUM]
+medium 1
+medium test 2
+medium test 3
+[LONG]
+test long 1
+long 2
+long 3 test"""
+    test_file.write(test_data)
+    command_line_typing.input = mock_input("", "This is a test line for testing.")
+    with mock.patch.object(command_line_typing, "FILE_NAME", test_file.strpath):
+        command_line_typing.main(["-p"])
+        captured = capsys.readouterr().out
+        assert "Press enter to start: " in captured

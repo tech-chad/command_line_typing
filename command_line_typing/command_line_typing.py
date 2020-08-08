@@ -80,6 +80,8 @@ def argument_parsing(args: Optional[Sequence[str]] = None) -> argparse.Namespace
                         help="Size of the practice typing phrase.")
     parser.add_argument("-c", dest="continues", action="store_true",
                         help="Continues practice until exit or quit is entered.")
+    parser.add_argument("-p", dest="pause", action="store_true",
+                        help="Pause before starting practice.")
     return parser.parse_args(args)
 
 
@@ -96,6 +98,8 @@ def main(args: Optional[Sequence[str]] = None) -> int:
         phrase = short_phrases + medium_phrases + long_phrases
 
     while True:
+        if argv.pause:
+            input("Press enter to start: ")
         practice(choice(phrase))
         if argv.continues:
             user_input = input("Another practice random practice phrase? ").lower()
