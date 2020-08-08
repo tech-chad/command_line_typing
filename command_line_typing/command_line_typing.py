@@ -1,4 +1,5 @@
 import argparse
+import sys
 import time
 from random import choice
 
@@ -6,6 +7,11 @@ from typing import List
 from typing import Optional
 from typing import Sequence
 from typing import Tuple
+
+if sys.version_info >= (3, 7):
+    from importlib.resources import read_text
+else:
+    from importlib_resources import read_text
 
 FILE_NAME = "phrases"
 
@@ -16,8 +22,7 @@ def load_practice_phrases() -> Tuple[List[str], List[str], List[str]]:
     medium = []
     long = []
     size = ""
-    with open(FILE_NAME, "r") as f:
-        data = f.read()
+    data = read_text("command_line_typing", "phrases.txt")
 
     for line in data.splitlines():
         if line == "[SHORT]":

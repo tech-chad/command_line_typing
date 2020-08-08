@@ -1,0 +1,5 @@
+/build/
+/tests
+dist
+venv
+.pytest_cache
