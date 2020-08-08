@@ -50,7 +50,7 @@ def test_check_for_mistakes(test_typed, expected_result):
 
 def test_practice_run_through_no_mistakes(capsys):
     command_line_typing.input = mock_input("This is a test line for testing.")
-    command_line_typing.practice("This is a test line for testing.")
+    command_line_typing.practice("This is a test line for testing.", False)
     captured = capsys.readouterr().out
     assert "Errors: 0" in captured
 
@@ -83,6 +83,14 @@ def test_argument_parsing_pause(test_args, expected_result):
 def test_argument_parsing_continues(test_args, expected_result):
     result = command_line_typing.argument_parsing(test_args)
     assert result.continues == expected_result
+
+
+@pytest.mark.parametrize("test_args, expected_result", [
+    ([], False), (["--wps"], True)
+])
+def test_argument_parsing_words_per_second(test_args, expected_result):
+    result = command_line_typing.argument_parsing(test_args)
+    assert result.show_wps == expected_result
 
 
 def test_main_pause_before_starting(capsys):

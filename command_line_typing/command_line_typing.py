@@ -53,7 +53,7 @@ def check_for_mistakes(practice_phrase: str, typed_phrase: str) -> int:
     return error_count
 
 
-def practice(practice_phrase: str) -> bool:
+def practice(practice_phrase: str, show_wps: bool) -> bool:
     print()
     print(practice_phrase)
     print()
@@ -67,7 +67,9 @@ def practice(practice_phrase: str) -> bool:
     # calculate wpm
     adjusted_len = len(data) / 5
     gross_wpm = adjusted_len / (elapse_time / 60.0)
+    gross_wps = adjusted_len / elapse_time
     net_wpm = (adjusted_len - error_count) / (elapse_time / 60.0)
+    net_wps = (adjusted_len - error_count) / elapse_time
 
     print()
     print("STATS:")
@@ -75,6 +77,10 @@ def practice(practice_phrase: str) -> bool:
     print(f"Errors: {error_count}")
     print(f"Net WPM: {net_wpm:.1f}")
     print(f"Time: {elapse_time:.1f} seconds")
+    if show_wps:
+        print(f"Gross WPS: {gross_wps:.1f}")
+        print(f"Net WPS: {net_wps:.1f}")
+
     return True
 
 
@@ -87,6 +93,8 @@ def argument_parsing(args: Optional[Sequence[str]] = None) -> argparse.Namespace
                         help="Continues practice until exit or quit is entered.")
     parser.add_argument("-p", dest="pause", action="store_true",
                         help="Pause before starting practice.")
+    parser.add_argument("--wps", dest="show_wps", action="store_true",
+                        help="Show words per second.")
     return parser.parse_args(args)
 
 
@@ -105,7 +113,7 @@ def main(args: Optional[Sequence[str]] = None) -> int:
     while True:
         if argv.pause:
             input("Press enter to start: ")
-        practice(choice(phrase))
+        practice(choice(phrase), argv.show_wps)
         if argv.continues:
             user_input = input("Another practice random practice phrase? ").lower()
             if user_input in ["y", "yes"]:
