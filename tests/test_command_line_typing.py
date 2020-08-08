@@ -15,8 +15,7 @@ def mock_input(*args):
     return mock_input2
 
 
-def test_load_practice_phrases(tmpdir):
-    test_file = tmpdir.join("phrases")
+def test_load_practice_phrases():
     test_data = """[SHORT]
 test line 1
 test line 2
@@ -28,8 +27,7 @@ medium test 3
 test long 1
 long 2
 long 3 test"""
-    test_file.write(test_data)
-    with mock.patch.object(command_line_typing, "FILE_NAME", test_file.strpath):
+    with mock.patch.object(command_line_typing, "read_text", return_value=test_data):
         short, medium, long = command_line_typing.load_practice_phrases()
     assert short == ["test line 1", "test line 2"]
     assert medium == ["medium 1", "medium test 2", "medium test 3"]
@@ -87,8 +85,7 @@ def test_argument_parsing_continues(test_args, expected_result):
     assert result.continues == expected_result
 
 
-def test_main_pause_before_starting(capsys, tmpdir):
-    test_file = tmpdir.join("phrases")
+def test_main_pause_before_starting(capsys):
     test_data = """[SHORT]
 test line 1
 test line 2
@@ -100,9 +97,8 @@ medium test 3
 test long 1
 long 2
 long 3 test"""
-    test_file.write(test_data)
     command_line_typing.input = mock_input("", "This is a test line for testing.")
-    with mock.patch.object(command_line_typing, "FILE_NAME", test_file.strpath):
+    with mock.patch.object(command_line_typing, "read_text", return_value=test_data):
         command_line_typing.main(["-p"])
         captured = capsys.readouterr().out
         assert "Press enter to start: " in captured

@@ -13,7 +13,7 @@ if sys.version_info >= (3, 7):
 else:
     from importlib_resources import read_text
 
-FILE_NAME = "phrases"
+FILE_NAME = "phrases.txt"
 
 
 def load_practice_phrases() -> Tuple[List[str], List[str], List[str]]:
@@ -22,7 +22,7 @@ def load_practice_phrases() -> Tuple[List[str], List[str], List[str]]:
     medium = []
     long = []
     size = ""
-    data = read_text("command_line_typing", "phrases.txt")
+    data = read_text("command_line_typing", FILE_NAME)
 
     for line in data.splitlines():
         if line == "[SHORT]":
