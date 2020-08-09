@@ -39,8 +39,12 @@ long 3 test"""
     ("This is a tast line for testing.", 1),
     ("This is a test lome for testing.", 2),
     ("this is a test line for testing", 2),
-    # ("This is a test line for testings.", 1),  # broken
+    ("This is a test line for testings.", 1),
     ("This is a test lone far testing.", 2),
+    ("This i a test line for testing.", 26),
+    ("This is a test kube for testing.", 3),
+    ("This is a teste line for testing.", 18),
+    ("This is a testline for testing.", 18),
 ])
 def test_check_for_mistakes(test_typed, expected_result):
     practice = "This is a test line for testing."

@@ -42,14 +42,17 @@ def load_practice_phrases() -> Tuple[List[str], List[str], List[str]]:
 
 
 def check_for_mistakes(practice_phrase: str, typed_phrase: str) -> int:
-    # todo make this better
+    # todo need more work
+    if typed_phrase == practice_phrase:
+        return 0
     practice_len = len(practice_phrase)
     typed_len = len(typed_phrase)
     error_count = 0
     for p, t in zip(practice_phrase, typed_phrase):
         if p != t:
             error_count += 1
-    error_count += abs(practice_len - typed_len)
+    if typed_len < practice_len:
+        error_count += abs(practice_len - typed_len)
     return error_count
 
 
