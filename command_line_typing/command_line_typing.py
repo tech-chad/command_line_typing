@@ -2,6 +2,7 @@ import argparse
 import sys
 import time
 from random import choice
+from random import randint
 
 from typing import List
 from typing import Optional
@@ -13,6 +14,8 @@ if sys.version_info >= (3, 7):
 else:
     from importlib_resources import read_text
 
+LOWER_LETTERS = [x for x in "abcdefghijklmnopqrstuvwxyz"]
+UPPER_LETTERS = [x for x in "ABCDEFGHIJKLMNOPQRSTUVWXYZ"]
 FILE_NAME = "phrases.txt"
 
 
@@ -39,6 +42,33 @@ def load_practice_phrases() -> Tuple[List[str], List[str], List[str]]:
             long.append(line)
 
     return short, medium, long
+
+
+def build_random_letter_phrase(size: str) -> str:
+    random_phrase = ""
+    if size == "short":
+        count = 50
+    elif size == "medium":
+        count = 75
+    elif size == "long":
+        count = 100
+    else:
+        count = 50
+
+    group_count = 0
+    max_group_count = randint(1, 7)
+    for x in range(count):
+        if group_count == max_group_count:
+            random_phrase += " "
+            max_group_count = randint(1, 7)
+            group_count = 0
+        else:
+            if group_count == 0 and choice([True, False]):
+                random_phrase += choice(UPPER_LETTERS)
+            else:
+                random_phrase += choice(LOWER_LETTERS)
+            group_count += 1
+    return random_phrase
 
 
 def check_for_mistakes(practice_phrase: str, typed_phrase: str) -> int:
@@ -96,6 +126,8 @@ def argument_parsing(args: Optional[Sequence[str]] = None) -> argparse.Namespace
                         help="Continues practice until exit or quit is entered.")
     parser.add_argument("-p", dest="pause", action="store_true",
                         help="Pause before starting practice.")
+    parser.add_argument("--random_letters", action="store_true",
+                        help="Random upper and lower letters and spaces")
     parser.add_argument("--wps", dest="show_wps", action="store_true",
                         help="Show words per second.")
     return parser.parse_args(args)
@@ -116,7 +148,11 @@ def main(args: Optional[Sequence[str]] = None) -> int:
     while True:
         if argv.pause:
             input("Press enter to start: ")
-        practice(choice(phrase), argv.show_wps)
+        if argv.random_letters:
+            practice_phrase = build_random_letter_phrase(argv.size)
+        else:
+            practice_phrase = choice(phrase)
+        practice(practice_phrase, argv.show_wps)
         if argv.continues:
             user_input = input("Another practice random practice phrase? ").lower()
             if user_input in ["y", "yes"]:

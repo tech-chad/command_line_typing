@@ -34,6 +34,14 @@ long 3 test"""
     assert long == ["test long 1", "long 2", "long 3 test"]
 
 
+@pytest.mark.parametrize("test_size, expected_len", [
+    ("short", 50), ("medium", 75), ("long", 100)
+])
+def test_build_random_letter_phrase_size(test_size, expected_len):
+    result = command_line_typing.build_random_letter_phrase(test_size)
+    assert len(result) == expected_len
+
+
 @pytest.mark.parametrize("test_typed, expected_result", [
     ("This is a test line for testing.", 0),
     ("This is a tast line for testing.", 1),
@@ -95,6 +103,14 @@ def test_argument_parsing_continues(test_args, expected_result):
 def test_argument_parsing_words_per_second(test_args, expected_result):
     result = command_line_typing.argument_parsing(test_args)
     assert result.show_wps == expected_result
+
+
+@pytest.mark.parametrize("test_args, expected_result", [
+    ([], False), (["--random_letters"], True),
+])
+def test_argument_parsing_random_letters(test_args, expected_result):
+    result = command_line_typing.argument_parsing(test_args)
+    assert result.random_letters == expected_result
 
 
 def test_main_pause_before_starting(capsys):
