@@ -16,6 +16,7 @@ else:
 
 LOWER_LETTERS = [x for x in "abcdefghijklmnopqrstuvwxyz"]
 UPPER_LETTERS = [x for x in "ABCDEFGHIJKLMNOPQRSTUVWXYZ"]
+DIGITS = [str(x) for x in range(10)]
 FILE_NAME = "phrases.txt"
 
 
@@ -69,6 +70,21 @@ def build_random_letter_phrase(size: str) -> str:
                 random_phrase += choice(LOWER_LETTERS)
             group_count += 1
     return random_phrase
+
+
+def build_nine_key_phrase(size: str) -> str:
+    nine_key_phrase = ""
+    if size == "short":
+        count = 42
+    elif size == "medium":
+        count = 65
+    elif size == "long":
+        count = 90
+    else:
+        count = 50
+    for x in range(count):
+        nine_key_phrase += choice(DIGITS)
+    return nine_key_phrase
 
 
 def check_for_mistakes(practice_phrase: str, typed_phrase: str) -> int:
@@ -128,6 +144,8 @@ def argument_parsing(args: Optional[Sequence[str]] = None) -> argparse.Namespace
                         help="Pause before starting practice.")
     parser.add_argument("--random_letters", action="store_true",
                         help="Random upper and lower letters and spaces")
+    parser.add_argument("--nine_key", action="store_true",
+                        help="Nine key practice with numbers")
     parser.add_argument("--wps", dest="show_wps", action="store_true",
                         help="Show words per second.")
     return parser.parse_args(args)
@@ -150,6 +168,8 @@ def main(args: Optional[Sequence[str]] = None) -> int:
             input("Press enter to start: ")
         if argv.random_letters:
             practice_phrase = build_random_letter_phrase(argv.size)
+        elif argv.nine_key:
+            practice_phrase = build_nine_key_phrase(argv.size)
         else:
             practice_phrase = choice(phrase)
         practice(practice_phrase, argv.show_wps)
